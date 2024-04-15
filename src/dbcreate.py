@@ -6,6 +6,7 @@ class DBCreate:
     """Класс для создания базы данных и таблиц"""
 
     def __init__(self):
+
         self.params_db = config()
 
     def create_database(self, database_name: str):
@@ -41,9 +42,17 @@ class DBCreate:
                         """)
 
                 cur.execute("""
+                    CREATE TABLE city (
+                        city_id serial primary key,
+                        city_name varchar(255) not null
+                        )
+                        """)
+
+                cur.execute("""
                     CREATE TABLE vacancies (
                         vacancy_id serial primary key,
                         employer_id INT REFERENCES employers(employer_id),
+                        city_id int REFERENCES city(city_id),
                         vacancy_code int not null,
                         vacancy_city varchar(255) not null,
                         vacancy_name text not null,
