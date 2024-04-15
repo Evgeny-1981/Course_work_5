@@ -1,5 +1,3 @@
-import psycopg2
-import os
 from config import config
 from src.api import HeadHunterAPI
 from src.dbcreate import DBCreate
@@ -23,17 +21,14 @@ def user_interaction():
     employers_dict = hh_api.get_employers(city_id)
     employer_id_name = {}
     for employer_id, employer_name in employers_dict.items():
-        employer_id_name[employer_id] = employer_name['employer_name']
-    for i, n in employer_id_name.items():
-        print(i,n)
-    # Получаем список id работодателей из словаря employers_dict
+        employer_id_name[employer_id] = employer_name['employer_name'], employer_name['employer_url']
+
+    #  Получаем список id работодателей из словаря employers_dict
     employers_list = []
     for employer in employers_dict:
         employers_list.append(employer)
-    for i in employers_list:
-        print(i)
 
-    # Запрос количества id работодателей, по которым будет выполнен поиск вакансий
+    #  Запрос количества id работодателей, по которым будет выполнен поиск вакансий
     # pause_get = 0  # Пауза при отборе вакансий, если выбрать более 20 работодателей для сбора вакансий
     num_employer = None
     while num_employer not in range(1, len(employers_list) + 1):
@@ -49,33 +44,33 @@ def user_interaction():
         except ValueError:
             print(f'Ошибка ошибка ввода! Введите целое число от 0 до {len(employers_list)}')
 
-    # Получаем список количества id работодателей, которое указал пользователь
-    count = 0
-    employers_list_id = []
-    for employer in employer_id_name:
-        if count < num_employer:
-            employers_list_id.append(employer)
-            count += 1
-        elif num_employer == "":
-            employers_list_id.append(employer)
+    #  Получаем список количества id работодателей, которое указал пользователь
+    # count = 0
+    # employers_list_id = []
+    # for employer in employer_id_name:
+    #     if count < num_employer:
+    #         employers_list_id.append(employer)
+    #         count += 1
+    #     elif num_employer == "":
+    #         employers_list_id.append(employer)
 
     #  Получаем список словарей словарей вакансий каждого работодателя
     result_data = []
+    count = 0
     for employer, name in employer_id_name.items():
-        vacancies = hh_api.get_vacancies_by_employers(employer, city_id)
-        result_data.append({'employer': employer, 'name': name, 'vacancies': vacancies})
+        if count < num_employer:
+            vacancies = hh_api.get_vacancies_by_employers(employer, city_id)
+            result_data.append({'employer': employer, 'name': name[0], 'employer_url': name[1], 'vacancies': vacancies})
+            count += 1
 
-    for item in result_data:
-
-        print(item)
-        print(type(item))
-
-    # создаем экземпляр класса DBCreate
+    #  Создаем экземпляр класса DBCreate
     db = DBCreate()
-    # conn = DBCreate()  # Создаем экземпляр, класса открываем подключение
-    db.create_database(database_name)
-    db.create_tables(database_name)
 
-    db.save_info_to_database(database_name, result_data)
-
+    #  conn = DBCreate()  # Создаем экземпляр, класса открываем подключение
     print(repr(db))
+    #  Создание базы данных
+    db.create_database(database_name)
+    #  Создание таблиц
+    db.create_tables(database_name)
+    #  Сохранение даных в таблицы
+    db.save_info_to_database(database_name, result_data)

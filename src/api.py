@@ -47,7 +47,7 @@ class HeadHunterAPI(AbstractAPI):
     def __repr__(self):
         return f'Ожидайте, выполняется подключение класса {self.__class__.__name__} к сайту HH...\n'
 
-    def get_city_id(self, query_city):
+    def get_city_id(self, query_city: str):
         """Метод получает id города, который ввел пользователь, для поиска работодателей"""
         response = requests.get(self.url_areas)
         if response.status_code == 200:
@@ -66,8 +66,8 @@ class HeadHunterAPI(AbstractAPI):
                         area_id = city['id']
                         return area_id
 
-    def get_employers(self, city_id):
-        """Метод получает компании по указанному городу в виде id и возвращает отсортированный словарь работодателей
+    def get_employers(self, city_id: str):
+        """Метод получает компании по указанному городу и возвращает отсортированный словарь работодателей
         по начальной зарплате"""
         vacancies = []
         params = {'page': 0, 'per_page': 100, 'area': city_id}
@@ -89,14 +89,16 @@ class HeadHunterAPI(AbstractAPI):
                 employer_name = vacancy['employer']['name']
                 employer_url = vacancy['employer']['alternate_url']
                 salary_from = vacancy["salary"]["from"] if vacancy["salary"] and vacancy["salary"]["from"] else 0
-                employers_dict[employer_id] = {'employer_name': employer_name, 'salary_from': salary_from}
+                employers_dict[employer_id] = {'employer_name': employer_name,
+                                               'salary_from': salary_from,
+                                               'employer_url': employer_url}
 
         sorted_employers_dict = dict(
             sorted(employers_dict.items(), key=lambda item: item[1]['salary_from'], reverse=True))
 
         return sorted_employers_dict
 
-    def get_vacancies_by_employers(self, employer, city_id):#, pause_get:float):
+    def get_vacancies_by_employers(self, employer: str, city_id: str):
         """Метод получает список словарей вакансий по переданным работодателям"""
         params = {'page': 0, 'per_page': 100, 'employer_id': {employer}, 'area': {city_id}}
         employer_vacancies = []
