@@ -87,6 +87,7 @@ class HeadHunterAPI(AbstractAPI):
             if vacancy['employer'].get('id') is not None:
                 employer_id = vacancy['employer']['id']
                 employer_name = vacancy['employer']['name']
+                employer_url = vacancy['employer']['alternate_url']
                 salary_from = vacancy["salary"]["from"] if vacancy["salary"] and vacancy["salary"]["from"] else 0
                 employers_dict[employer_id] = {'employer_name': employer_name, 'salary_from': salary_from}
 

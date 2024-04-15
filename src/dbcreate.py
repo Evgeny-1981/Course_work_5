@@ -35,8 +35,7 @@ class DBCreate:
                     CREATE TABLE employers (
                         employer_id serial primary key,
                         company_id int,
-                        employer_name varchar(255) not null,
-                        employer_url varchar(255)
+                        employer_name varchar(255) not null
                         )
                         """)
 
@@ -62,17 +61,15 @@ class DBCreate:
 
         with conn.cursor() as cur:
             for employer in result_data:
-                employer_data = employer['employer']
-
-                employer_name = employer['vacancies']['employer']['name']
+                employer_id = employer['employer']
+                employer_name = employer['name']
                 cur.execute(
                     """
-                    INSERT INTO channels (title, views, subscribers, videos, channel_url)
-                    VALUES (%s, %s, %s, %s, %s)
-                    RETURNING channel_id
+                    INSERT INTO employers (company_id, employer_name)
+                    VALUES (%s, %s)
+                    RETURNING company_id
                     """,
-                    (channel_data['title'], channel_stats['viewCount'], channel_stats['subscriberCount'],
-                     channel_stats['videoCount'], f"https://www.youtube.com/channel/{channel['channel']['id']}")
+                    (employer_id, employer_name)
                 )
                 channel_id = cur.fetchone()[0]
                 videos_data = channel['videos']
@@ -90,23 +87,23 @@ class DBCreate:
         conn.commit()
         conn.close()
 
-        with (psycopg2.connect(dbname=database_name, **self.params_db) as conn):
-            with conn.cursor() as cur:
-                for key, value in employers_dict.items():
-                    cur.execute(f"INSERT INTO employers(company_id, employer_name, employer_url) "
-                                f"values({key}, $${value["employer_name"]}$$"
-                                f", '{value["employer_url"]}')")
-                for vacancy in vacancies_list:
-                    salary_from = vacancy["salary"]["from"] if vacancy["salary"] and vacancy["salary"]["from"] else 0
-                    salary_to = vacancy["salary"]["to"] if vacancy["salary"] and vacancy["salary"]["to"] else 0
-                    salary_currency = vacancy["salary"]["currency"] if vacancy["salary"] and vacancy["salary"]["currency"] else 'НЕТ'
-                    cur.execute(f"INSERT INTO vacancies(employer_id, vacancy_code, vacancy_city, vacancy_name, salary_from, "
-                                f"salary_to, currency, vacancy_url) values('{vacancy['employer']['id']}', '{vacancy['id']}',"
-                                f"'{vacancy['area']['name']}', "
-                                f"$${vacancy['name']}$$, "
-                                f"'{salary_from}', "
-                                f"'{salary_to}', "
-                                f"'{salary_currency}', "
-                                f"'{vacancy['alternate_url']}')")
-
-        conn.close()
+        # with (psycopg2.connect(dbname=database_name, **self.params_db) as conn):
+        #     with conn.cursor() as cur:
+        #         for key, value in employers_dict.items():
+        #             cur.execute(f"INSERT INTO employers(company_id, employer_name, employer_url) "
+        #                         f"values({key}, $${value["employer_name"]}$$"
+        #                         f", '{value["employer_url"]}')")
+        #         for vacancy in vacancies_list:
+        #             salary_from = vacancy["salary"]["from"] if vacancy["salary"] and vacancy["salary"]["from"] else 0
+        #             salary_to = vacancy["salary"]["to"] if vacancy["salary"] and vacancy["salary"]["to"] else 0
+        #             salary_currency = vacancy["salary"]["currency"] if vacancy["salary"] and vacancy["salary"]["currency"] else 'НЕТ'
+        #             cur.execute(f"INSERT INTO vacancies(employer_id, vacancy_code, vacancy_city, vacancy_name, salary_from, "
+        #                         f"salary_to, currency, vacancy_url) values('{vacancy['employer']['id']}', '{vacancy['id']}',"
+        #                         f"'{vacancy['area']['name']}', "
+        #                         f"$${vacancy['name']}$$, "
+        #                         f"'{salary_from}', "
+        #                         f"'{salary_to}', "
+        #                         f"'{salary_currency}', "
+        #                         f"'{vacancy['alternate_url']}')")
+        #
+        # conn.close()

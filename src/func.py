@@ -76,6 +76,6 @@ def user_interaction():
     db.create_database(database_name)
     db.create_tables(database_name)
 
-    # db.save_info_to_database(database_name, result_data)
+    db.save_info_to_database(database_name, result_data)
 
     print(repr(db))
