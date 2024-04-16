@@ -29,7 +29,6 @@ def user_interaction():
         employers_list.append(employer)
 
     #  Запрос количества id работодателей, по которым будет выполнен поиск вакансий
-    # pause_get = 0  # Пауза при отборе вакансий, если выбрать более 20 работодателей для сбора вакансий
     num_employer = None
     while num_employer not in range(1, len(employers_list) + 1):
         try:
@@ -37,22 +36,10 @@ def user_interaction():
                 input(f'По указанному городу найдено {len(employers_list)} компаний, разместивших вакансии.\n'
                       f'Введите количество компаний по которым искать вакансии от 0 до {len(employers_list)}, '
                       f'если ввести "0" и нажать "Enter", то будут выбраны все найденные компании: '))
-            # if num_employer > 20:
-            # pause_get = 20  # Увеличиваем время паузы между запросами, чтобы сайт HH.ru не оборвал соединение
             if num_employer == 0:
                 num_employer = len(employers_list)
         except ValueError:
             print(f'Ошибка ошибка ввода! Введите целое число от 0 до {len(employers_list)}')
-
-    #  Получаем список количества id работодателей, которое указал пользователь
-    # count = 0
-    # employers_list_id = []
-    # for employer in employer_id_name:
-    #     if count < num_employer:
-    #         employers_list_id.append(employer)
-    #         count += 1
-    #     elif num_employer == "":
-    #         employers_list_id.append(employer)
 
     #  Получаем список словарей словарей вакансий каждого работодателя
     result_data = []
@@ -65,12 +52,10 @@ def user_interaction():
 
     #  Создаем экземпляр класса DBCreate
     db = DBCreate()
-
-    #  conn = DBCreate()  # Создаем экземпляр, класса открываем подключение
     print(repr(db))
     #  Создание базы данных
     db.create_database(database_name)
     #  Создание таблиц
     db.create_tables(database_name)
     #  Сохранение даных в таблицы
-    db.save_info_to_database(database_name, result_data)
+    db.save_info_to_database(database_name, result_data, city_name)
