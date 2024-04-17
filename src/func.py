@@ -63,14 +63,29 @@ def user_interaction():
     # db.create_tables(database_name)
     # #  Сохранение даных в таблицы
     # db.save_info_to_database(database_name, result_data, city_name)
+
     db_manager = DBManager
     conn = db_manager(database_name, params_db)
+
     query_1 = db_manager.get_companies_and_vacancies_count(conn)
-    for row in query_1:
-        print(f"Компания: '{row[0]}', количество вакансий: {row[1]}")
+    for i, row in enumerate(query_1, 1):
+        print(f"{i}.Компания: '{row[0]}', количество вакансий: {row[1]}")
+
     query_2 = db_manager.get_all_vacancies(conn)
+    print(row[0])
     for row in query_2:
         print(f"Компания: '{row[0]}', вакансия: '{row[1]}', зарплата: '{row[2]}', URL: '{row[3]}'")
+
     query_3 = db_manager.get_avg_salary(conn)
     for row in query_3:
         print(f"Средняя зарплата по всем имеющимся вакансиям в базе данных: {round(float(row[0]), 2)} у.е.")
+
+    query_4 = db_manager.get_vacancies_with_higher_salary(conn)
+    print(f"Список всех вакансий, у которых зарплата выше средней по всем вакансиям:")
+    for i, row in enumerate(query_4, 1):
+        print(f"{i}. {row[0]}")
+
+    query_5 = db_manager.get_vacancies_with_keyword(conn, user_input=input("Введите искомое слово в названии вакансии: "))
+    print(f"Найдено {len(query_5)} вакансий:")
+    for i, row in enumerate(query_5, 1):
+        print((f"{i}. Вакансия: {row[3]}, ссылка на вакансию: {row[6]}"))

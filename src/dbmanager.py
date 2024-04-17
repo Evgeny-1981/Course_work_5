@@ -10,7 +10,7 @@ class DBManager:
 
     def get_companies_and_vacancies_count(self):
         """ Получает список всех компаний и количество вакансий у каждой компании. """
-        with self.conn.cursor()as cur:
+        with self.conn.cursor() as cur:
             cur.execute("""SELECT E.employer_name, count(employer_id) from vacancies V
                         join employers E using(employer_id)
                         where E.employer_id = V.employer_id
@@ -38,15 +38,15 @@ class DBManager:
     def get_vacancies_with_higher_salary(self):
         """Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям"""
         with self.conn.cursor() as cur:
-            cur.execute("""select * from vacancies 
+            cur.execute("""select v.vacancy_name from vacancies v
                         where salary_from > (select avg((salary_from+salary_to)/2) from vacancies)""")
-            answer = cur.fetchall()
-        return answer
 
-    def get_vacancies_with_keyword(self):
+            return cur.fetchall()
+
+    def get_vacancies_with_keyword(self, user_input):
         """Получает список всех вакансий, в названии которых содержатся
         переданные в метод слова, например python"""
         with self.conn.cursor() as cur:
-            cur.execute(f"SELECT * FROM  vacancies WHERE vacancy_name LIKE '%{word}%'")
-            answer = cur.fetchall()
-        return answer
+            cur.execute(f"SELECT * FROM  vacancies WHERE vacancy_name LIKE '%{user_input}%'")
+
+            return cur.fetchall()
