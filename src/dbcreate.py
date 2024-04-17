@@ -6,7 +6,6 @@ class DBCreate:
     """Класс для создания базы данных и таблиц"""
 
     def __init__(self):
-
         self.params_db = config()
 
     def create_database(self, database_name: str):

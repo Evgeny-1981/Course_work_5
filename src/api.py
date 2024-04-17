@@ -52,7 +52,7 @@ class HeadHunterAPI(AbstractAPI):
         if response.status_code == 200:
             data = response.json()
         else:
-            print(f"Error: {response.status_code}")
+            print(f"Ошибка: {response.status_code}")
             return None
 
         for country in data:
@@ -78,7 +78,7 @@ class HeadHunterAPI(AbstractAPI):
                 vacancies.extend(vacancy)
                 params['page'] += 1
             else:
-                print(f"Error: {response.status_code}")
+                print(f"Ошибка: {response.status_code}")
                 return None
 
         employers_dict = {}
@@ -92,10 +92,7 @@ class HeadHunterAPI(AbstractAPI):
                                                'salary_from': salary_from,
                                                'employer_url': employer_url}
 
-        sorted_employers_dict = dict(
-            sorted(employers_dict.items(), key=lambda item: item[1]['salary_from'], reverse=True))
-
-        return sorted_employers_dict
+        return employers_dict
 
     def get_vacancies_by_employers(self, employer: str, city_id: str):
         """Метод получает список словарей вакансий по переданным работодателям"""
@@ -110,5 +107,5 @@ class HeadHunterAPI(AbstractAPI):
                 # time.sleep = pause_get
                 return employer_vacancies
             else:
-                print(f"Error: {response.status_code}")
+                print(f"Ошибка: {response.status_code}")
                 return None
