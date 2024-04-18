@@ -3,18 +3,35 @@ from config import config
 
 
 class DBManager:
-    def __init__(self, database_name, params):
-        self.params_db = params
+    def __init__(self, database_name):
+        self.params_db = config()
         self.database_name = database_name
         self.conn = psycopg2.connect(dbname=self.database_name, **self.params_db)
+
+    def chek_database(self, database_name: str, conn):
+        # Запрос на получение списка всех баз данных
+        # conn = psycopg2.connect(dbname='postgres', **self.params_db)
+        cur = conn.cursor()
+        cur.execute("SELECT datname FROM pg_database")
+        cur.close()
+        conn.close()
+
+    # Проверка существования базы данных
+        database_list = [row[0] for row in cur.fetchall()]
+
+        if database_name in database_list:
+            print(f"База данных '{database_name}' существует")
+        else:
+            print(f"База данных '{database_name}' не существует")
+
 
     def get_companies_and_vacancies_count(self):
         """ Получает список всех компаний и количество вакансий у каждой компании. """
         with self.conn.cursor() as cur:
-            cur.execute("""SELECT E.employer_name, count(employer_id) from vacancies V
-                        join employers E using(employer_id)
-                        where E.employer_id = V.employer_id
-                        group by E.employer_id """)
+            cur.execute("""select e.employer_name, count(employer_id) from vacancies v
+                        join employers e using(employer_id)
+                        where e.employer_id = v.employer_id
+                        group by e.employer_id order by count(employer_id) desc""")
 
             return cur.fetchall()
 
@@ -22,7 +39,7 @@ class DBManager:
         """Получает список всех вакансий с указанием названия компании,
         названия вакансии и зарплаты и ссылки на вакансию"""
         with self.conn.cursor() as cur:
-            cur.execute("""select e.employer_name, v.vacancy_name, CONCAT(v.salary_from, '-', v.salary_to),
+            cur.execute("""select e.employer_name, v.vacancy_name, concat(v.salary_from, '-', v.salary_to),
                         v.vacancy_url from vacancies v
                         join employers e using(employer_id)""")
 
@@ -38,8 +55,9 @@ class DBManager:
     def get_vacancies_with_higher_salary(self):
         """Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям"""
         with self.conn.cursor() as cur:
-            cur.execute("""select v.vacancy_name from vacancies v
-                        where salary_from > (select avg((salary_from+salary_to)/2) from vacancies)""")
+            cur.execute("""select v.vacancy_name, v.salary_from from vacancies v 
+                        where salary_from > (select avg(salary_from+salary_to)/2 from vacancies)
+                        order by salary_from desc""")
 
             return cur.fetchall()
 
@@ -47,6 +65,10 @@ class DBManager:
         """Получает список всех вакансий, в названии которых содержатся
         переданные в метод слова, например python"""
         with self.conn.cursor() as cur:
-            cur.execute(f"SELECT * FROM  vacancies WHERE vacancy_name LIKE '%{user_input}%'")
+            cur.execute(f"select * from vacancies where vacancy_name ilike '%{user_input}%'")
 
             return cur.fetchall()
+
+    def quit(self) -> None:
+        """ Закрывает соединение базой данных. """
+        self.conn.close()
