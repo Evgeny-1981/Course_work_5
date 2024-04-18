@@ -73,7 +73,6 @@ class HeadHunterAPI(AbstractAPI):
             response = requests.get(self.url_vacancies, params=params, headers=self.headers)
             if response.status_code == 200:
                 vacancy = response.json()['items']
-
                 vacancies.extend(vacancy)
                 params['page'] += 1
             else:
