@@ -66,7 +66,7 @@ class HeadHunterAPI(AbstractAPI):
                         return area_id
 
     def get_employers(self, city_id: str):
-        """Метод получает компании по указанному городу и возвращает список работодателей"""
+        """Метод получает компании по указанному городу и возвращает словарь работодателей"""
         vacancies = []
         params = {'page': 0, 'per_page': 100, 'area': city_id}
         while params.get('page') != 20:
