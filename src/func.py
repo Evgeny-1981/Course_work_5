@@ -23,7 +23,6 @@ def user_interaction():
     employer_id_name = {}
     for employer_id, employer_name in employers_dict.items():
         employer_id_name[employer_id] = employer_name['employer_name'], employer_name['employer_url']
-    print(len(employer_id_name))
 
     #  Получаем список id работодателей из словаря employers_dict
     employers_list = []
