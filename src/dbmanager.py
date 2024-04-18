@@ -7,24 +7,7 @@ class DBManager:
         self.params_db = config()
         self.database_name = database_name
         self.conn = psycopg2.connect(dbname=self.database_name, **self.params_db)
-
-    def chek_database(self, database_name: str, conn):
-        # Запрос на получение списка всех баз данных
-        # conn = psycopg2.connect(dbname='postgres', **self.params_db)
-        cur = conn.cursor()
-        cur.execute("SELECT datname FROM pg_database")
-        cur.close()
-        conn.close()
-
-    # Проверка существования базы данных
-        database_list = [row[0] for row in cur.fetchall()]
-
-        if database_name in database_list:
-            print(f"База данных '{database_name}' существует")
-        else:
-            print(f"База данных '{database_name}' не существует")
-
-
+    
     def get_companies_and_vacancies_count(self):
         """ Получает список всех компаний и количество вакансий у каждой компании. """
         with self.conn.cursor() as cur:
