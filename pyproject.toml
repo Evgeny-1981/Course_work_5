@@ -1,12 +1,15 @@
 [tool.poetry]
 name = "course-work-5"
 version = "0.1.0"
-description = ""
+description = "Курсовая работа №5. Базы данных"
 authors = ["Evgeny Egorov <EAEgorov42@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+psycopg2 = "^2.9.9"
+requests = "^2.31.0"
+chardet = "^5.2.0"
 
 
 [build-system]
