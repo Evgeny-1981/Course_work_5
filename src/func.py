@@ -1,4 +1,3 @@
-from config import config
 from src.api import HeadHunterAPI
 from src.dbcreate import DBCreate
 from src.dbmanager import DBManager
@@ -6,7 +5,7 @@ from src.dbmanager import DBManager
 
 def user_interaction():
     """Функция для взаимодействия с пользователем"""
-    params_db = config()
+    # params_db = config()
     database_name = 'coursework5'
 
     # создание экземпляра класса HeadHunterAPI
@@ -63,12 +62,12 @@ def user_interaction():
     #  Создаем экземпляр класса DBManager для подключения к БД
     conn = DBManager(database_name)
     print("Данные получены и записаны в базу данных. Выберите дальнейшие действия:")
-    user_input = None
+    # user_input = None
     while True:
         try:
             user_input = int(input("""
         1 - Вывести список всех компаний и количество их вакансий.
-        2 - Вывести список всех вакансий с указанием названия компании, названия вакансии и зарплаты и ссылки на вакансию.
+        2 - Вывести список всех вакансий с указанием названия компании, названия вакансии, зарплаты,ссылки на вакансию.
         3 - Вывести среднюю зарплату по вакансиям.
         4 - Вывести список всех вакансий, у которых зарплата выше средней по всем вакансиям.
         5 - Вывести список всех вакансий, в названии которых содержатся переданные в метод слова.
@@ -114,4 +113,3 @@ def user_interaction():
 
         except ValueError:
             print(f'Ошибка ввода! Введите целое число от 0 до 5')
-
