@@ -1,5 +1,3 @@
-import time
-
 import requests
 from abc import ABC, abstractmethod
 
@@ -34,7 +32,7 @@ class HeadHunterAPI(AbstractAPI):
     id_area: str  # Код города
     employer_vacancies: list  # Список вакансий
 
-    def __init__(self, id_employer=None, id_area=None):
+    def __init__(self):
         self.pause_get = None
         self.employer = None
         self.city_name = None
@@ -44,7 +42,7 @@ class HeadHunterAPI(AbstractAPI):
         self.headers = {'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36'}
 
     def __repr__(self):
-        return (f'Ожидайте, выполняется подключение класса {self.__class__.__name__} к сайту HH.ru')
+        return f'Ожидайте, выполняется подключение класса {self.__class__.__name__} к сайту HH.ru'
 
     def get_city_id(self, query_city: str):
         """Метод получает id города, который ввел пользователь, для поиска работодателей"""
